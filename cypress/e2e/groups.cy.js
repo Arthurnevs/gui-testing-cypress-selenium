@@ -101,7 +101,7 @@ describe('groups', () => {
     cy.get('body').should('contain', 'Customer group code has to be unique.');
   });
 
-  it('Should create a new customer group', () => {
+  it('Should create a new customer group and delete', () => {
     // 1. Clicar em "Groups" no menu lateral
     cy.clickInFirst('a[href="/admin/customer-groups/"]');
     

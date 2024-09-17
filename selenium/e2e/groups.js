@@ -137,7 +137,7 @@ describe('groups', () => {
     assert(bodyText.includes('Customer group code has to be unique.'));
   });
 
-  it('Should create a new customer group', async () => {
+  it('Should create a new customer group and delete', async () => {
     // 1. Clicar em "Groups" no menu lateral
     await driver.findElement(By.linkText('Groups')).click();
 
@@ -177,5 +177,4 @@ describe('groups', () => {
     assert(bodyText.includes('Customer group has been successfully deleted.'));
   });
 
-  // Implement the remaining test cases in a similar manner
 });
