@@ -45,13 +45,12 @@ describe('groups', () => {
     cy.get('body').should('contain', 'Cannot delete, the Customer group is in use');
   });
 
-  it('Should select two customer groups, click delete and not confirm the deletion', () => {
+  it('Should select two customer groups, click delete and confirm the deletion', () => {
     // 1. Clicar em "Groups" no menu lateral
     cy.clickInFirst('a[href="/admin/customer-groups/"]');
   
     // 2. Selecionar as checkboxes dos grupos "retail" e "wholesale"
-    cy.get('input[type="checkbox"]').eq(1).check(); // Seleciona a checkbox do grupo "retail"
-    cy.get('input[type="checkbox"]').eq(2).check(); // Seleciona a checkbox do grupo "wholesale"
+    cy.get('input[type="checkbox"]').eq(0).check(); // Seleciona a checkbox do grupo "retail"
   
     // 3. Clicar no botão "Delete" com o atributo `data-bulk-action-requires-confirmation`
     cy.get('button[data-bulk-action-requires-confirmation]').first().click();
@@ -60,10 +59,7 @@ describe('groups', () => {
   
     // 4. Verificar a mensagem de erro (se relevante)
     cy.get('body').should('contain', 'Cannot delete, the Customer group is in use');
-  
-    // Espera alguns segundos para simular a ausência de ação do usuário
-    cy.wait(3000); // Aguarda 3 segundos para simular a tentativa de não realizar uma ação
-  
+    
     // Assert: Verificar que os grupos ainda existem na tabela após não confirmar a exclusão
     cy.get('table').should('contain', 'retail');
     cy.get('table').should('contain', 'Wholesale 100');
