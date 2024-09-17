@@ -97,5 +97,45 @@ describe('groups', () => {
     assert(tableText.includes('Wholesale 100'));
   });
 
+  it('Should create a new customer group called Group 1 with error code', async () => {
+    // 1. Clicar em "Groups" no menu lateral
+    await driver.findElement(By.linkText('Groups')).click();
+    
+    // 2. Clicar no botão "Create" para adicionar um novo grupo de clientes
+    await driver.findElement(By.css('a[href="/admin/customer-groups/new"]')).click();
+    
+    // 3. Preencher os inputs "Code" e "Name" com "Group 1"
+    await driver.findElement(By.id('sylius_customer_group_code')).sendKeys('Group 1');
+    await driver.findElement(By.id('sylius_customer_group_name')).sendKeys('Group 1');
+
+    // 4. Clicar no botão de salvar
+    await driver.findElement(By.css('button.ui.labeled.icon.primary.button')).click();
+
+    // Assert: Verificar a mensagem de erro de código inválido
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
+    assert(bodyText.includes('Customer group code can only be comprised of letters, numbers, dashes and underscores.'));
+  });
+
+  it('Should create a new customer group called Group 1 with duplicated code', async () => {
+    // 1. Clicar em "Groups" no menu lateral
+    await driver.findElement(By.linkText('Groups')).click();
+    
+    // 2. Clicar no botão "Create" para adicionar um novo grupo de clientes
+    await driver.findElement(By.css('a[href="/admin/customer-groups/new"]')).click();
+    
+    // 3. Preencher os inputs "Code" e "Name" com código duplicado
+    await driver.findElement(By.id('sylius_customer_group_code')).sendKeys('retail');
+    await driver.findElement(By.id('sylius_customer_group_name')).sendKeys('Group 1');
+
+    // 4. Clicar no botão de salvar
+    await driver.findElement(By.css('button.ui.labeled.icon.primary.button')).click();
+
+    // Assert: Verificar a mensagem de erro de código duplicado
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
+    assert(bodyText.includes('Customer group code has to be unique.'));
+  });
+
   // Implement the remaining test cases in a similar manner
 });

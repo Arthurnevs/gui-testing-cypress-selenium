@@ -64,11 +64,41 @@ describe('groups', () => {
     cy.get('table').should('contain', 'retail');
     cy.get('table').should('contain', 'Wholesale 100');
   });
-  
 
-  it('test case 3', () => {
-    // Implement your test case 3 code here
+  
+  it('Should create a new customer group called Group 1 with error code', () => {
+    // 1. Clicar em "Groups" no menu lateral
+    cy.clickInFirst('a[href="/admin/customer-groups/"]');
+    
+    // 2. Clicar no botão "Create" para adicionar um novo grupo de clientes
+    cy.get('a[href="/admin/customer-groups/new"]').click();
+    
+    // 3. Preencher os inputs "Code" e "Name" com "Group 1"
+    cy.get('[id="sylius_customer_group_code"]').clear().type('Group 1');
+    cy.get('[id="sylius_customer_group_name"]').clear().type('Group 1');
+
+    cy.get('button.ui.labeled.icon.primary.button').click();
+
+    cy.get('body').should('contain', 'This form contains errors.');
+    cy.get('body').should('contain', 'Customer group code can only be comprised of letters, numbers, dashes and underscores.');
   });
 
-  // Implement the remaining test cases in a similar manner
+
+  it('Should create a new customer group called Group 1 duplicated code', () => {
+    // 1. Clicar em "Groups" no menu lateral
+    cy.clickInFirst('a[href="/admin/customer-groups/"]');
+    
+    // 2. Clicar no botão "Create" para adicionar um novo grupo de clientes
+    cy.get('a[href="/admin/customer-groups/new"]').click();
+    
+    // 3. Preencher os inputs "Code" e "Name" com "Group 1"
+    cy.get('[id="sylius_customer_group_code"]').clear().type('retail');
+    cy.get('[id="sylius_customer_group_name"]').clear().type('Group 1');
+
+    cy.get('button.ui.labeled.icon.primary.button').click();
+
+    cy.get('body').should('contain', 'This form contains errors.');
+    cy.get('body').should('contain', 'Customer group code has to be unique.');
+  });
+
 });
