@@ -6,7 +6,7 @@ describe('groups', () => {
     cy.get('.primary').click();
   });
   // Remove .only and implement others test cases!
-  it.only('update the name of Wholesale group', () => {
+  it('update the name of Wholesale group', () => {
     // Click in groups in side menu
     cy.clickInFirst('a[href="/admin/customer-groups/"]');
     // Type in value input to search for specify group
@@ -23,9 +23,53 @@ describe('groups', () => {
     // Assert that group has been updated
     cy.get('body').should('contain', 'Customer group has been successfully updated.');
   });
-  it('test case 2', () => {
-    // Implement your test case 2 code here
+
+
+  it('Should attempt to delete a customer group in use and verify error message', () => {
+    // 1. Clicar em "Groups" no menu lateral
+    cy.clickInFirst('a[href="/admin/customer-groups/"]');
+
+    // 2. Digitar o nome do grupo "Wholesale 100" no campo de busca para filtrar os grupos de clientes
+    cy.get('[id="criteria_search_value"]').type('Wholesale 100');
+    
+    // 3. Clicar no botão "Filter" para aplicar o filtro
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    
+    // 4. Clicar no botão "Delete" do grupo listado
+    cy.get('*[class^="ui red labeled icon button"]').last().click();
+    
+    // 5. Confirmar a exclusão do grupo ao clicar no botão "Yes" usando o seletor correto
+    cy.get('#confirmation-button').click(); // Seleciona o botão com ID confirmation-button
+
+    // Assert: Verificar se a mensagem de erro correta aparece
+    cy.get('body').should('contain', 'Cannot delete, the Customer group is in use');
   });
+
+  it('Should select two customer groups, click delete and not confirm the deletion', () => {
+    // 1. Clicar em "Groups" no menu lateral
+    cy.clickInFirst('a[href="/admin/customer-groups/"]');
+  
+    // 2. Selecionar as checkboxes dos grupos "retail" e "wholesale"
+    cy.get('input[type="checkbox"]').eq(1).check(); // Seleciona a checkbox do grupo "retail"
+    cy.get('input[type="checkbox"]').eq(2).check(); // Seleciona a checkbox do grupo "wholesale"
+  
+    // 3. Clicar no botão "Delete" com o atributo `data-bulk-action-requires-confirmation`
+    cy.get('button[data-bulk-action-requires-confirmation]').first().click();
+
+    cy.get('#confirmation-button').click();
+  
+    // 4. Verificar a mensagem de erro (se relevante)
+    cy.get('body').should('contain', 'Cannot delete, the Customer group is in use');
+  
+    // Espera alguns segundos para simular a ausência de ação do usuário
+    cy.wait(3000); // Aguarda 3 segundos para simular a tentativa de não realizar uma ação
+  
+    // Assert: Verificar que os grupos ainda existem na tabela após não confirmar a exclusão
+    cy.get('table').should('contain', 'retail');
+    cy.get('table').should('contain', 'Wholesale 100');
+  });
+  
+
   it('test case 3', () => {
     // Implement your test case 3 code here
   });
