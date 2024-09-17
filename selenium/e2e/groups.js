@@ -137,5 +137,45 @@ describe('groups', () => {
     assert(bodyText.includes('Customer group code has to be unique.'));
   });
 
+  it('Should create a new customer group', async () => {
+    // 1. Clicar em "Groups" no menu lateral
+    await driver.findElement(By.linkText('Groups')).click();
+
+    // 2. Clicar no botão "Create" para adicionar um novo grupo de clientes
+    await driver.findElement(By.css('a[href="/admin/customer-groups/new"]')).click();
+
+    // 3. Preencher os inputs "Code" e "Name" com "Group 1"
+    await driver.findElement(By.id('sylius_customer_group_code')).clear();
+    await driver.findElement(By.id('sylius_customer_group_code')).sendKeys('code');
+    await driver.findElement(By.id('sylius_customer_group_name')).clear();
+    await driver.findElement(By.id('sylius_customer_group_name')).sendKeys('Group 1');
+
+    // 4. Clicar no botão "Save changes"
+    await driver.findElement(By.css('button.ui.labeled.icon.primary.button')).click();
+
+    // 5. Verificar a mensagem de sucesso
+    let bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Success'));
+    assert(bodyText.includes('Customer group has been successfully created.'));
+
+    // 6. Clicar no link "Cancel" para voltar à lista de grupos
+    await driver.findElement(By.linkText('Cancel')).click();
+
+    // 7. Pesquisar pelo grupo criado usando o código 'code'
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('code');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+
+    // 8. Clicar no botão "Delete" do grupo criado
+    const deleteButtons = await driver.findElements(By.css('*[class^="ui red labeled icon button"]'));
+    await deleteButtons[deleteButtons.length - 1].click();
+
+    // 9. Confirmar a exclusão clicando no botão "Yes"
+    await driver.findElement(By.id('confirmation-button')).click();
+
+    // 10. Verificar a mensagem de sucesso de deleção
+    bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Customer group has been successfully deleted.'));
+  });
+
   // Implement the remaining test cases in a similar manner
 });

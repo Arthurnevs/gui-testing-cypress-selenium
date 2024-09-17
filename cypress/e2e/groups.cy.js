@@ -101,4 +101,33 @@ describe('groups', () => {
     cy.get('body').should('contain', 'Customer group code has to be unique.');
   });
 
+  it('Should create a new customer group', () => {
+    // 1. Clicar em "Groups" no menu lateral
+    cy.clickInFirst('a[href="/admin/customer-groups/"]');
+    
+    // 2. Clicar no botão "Create" para adicionar um novo grupo de clientes
+    cy.get('a[href="/admin/customer-groups/new"]').click();
+    
+    // 3. Preencher os inputs "Code" e "Name" com "Group 1"
+    cy.get('[id="sylius_customer_group_code"]').clear().type('code');
+    cy.get('[id="sylius_customer_group_name"]').clear().type('Group 1');
+
+    cy.get('button.ui.labeled.icon.primary.button').click();
+
+    cy.get('body').should('contain', 'Success');
+    cy.get('body').should('contain', 'Customer group has been successfully created.');
+
+    cy.get('a').contains('Cancel').click(); // Localiza o link "Cancel" pelo texto e clica para voltar a home
+
+    cy.get('[id="criteria_search_value"]').type('code');
+
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    
+    cy.get('*[class^="ui red labeled icon button"]').last().click();
+    
+    cy.get('#confirmation-button').click();
+
+    cy.get('body').should('contain', 'Customer group has been successfully deleted.');
+  });
+
 });
